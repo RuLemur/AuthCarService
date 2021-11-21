@@ -4,6 +4,24 @@ definitions:
       message:
         type: string
     type: object
+  endpoint.AddCarRequest:
+    properties:
+      car_name:
+        type: string
+      mileage:
+        type: integer
+      model_id:
+        type: integer
+      production_year:
+        type: integer
+      user_id:
+        type: integer
+    type: object
+  endpoint.AddCarResponse:
+    properties:
+      user_car_id:
+        type: integer
+    type: object
   endpoint.AddUserRequest:
     properties:
       username:
@@ -41,6 +59,20 @@ definitions:
           $ref: '#/definitions/endpoint.Car'
         type: array
     type: object
+  endpoint.GetUserCarsRequest:
+    properties:
+      user_id:
+        type: integer
+    type: object
+  endpoint.GetUserCarsResponse:
+    properties:
+      user_cars:
+        items:
+          $ref: '#/definitions/endpoint.UserCar'
+        type: array
+      user_id:
+        type: integer
+    type: object
   endpoint.GetUserResponse:
     properties:
       garage_id:
@@ -52,6 +84,21 @@ definitions:
       username:
         type: string
     type: object
+  endpoint.UserCar:
+    properties:
+      added_at:
+        type: string
+      car_name:
+        type: string
+      id:
+        type: integer
+      mileage:
+        type: integer
+      model_id:
+        type: integer
+      production_year:
+        type: integer
+    type: object
   internal_controller.Error:
     properties:
       message:
@@ -60,6 +107,40 @@ definitions:
 info:
   contact: {}
 paths:
+  /cars/add:
+    post:
+      consumes:
+      - application/json
+      description: add car to user
+      parameters:
+      - description: Add Car
+        in: body
+        name: cars
+        required: true
+        schema:
+          $ref: '#/definitions/endpoint.AddCarRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/endpoint.AddCarResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/AuthCarService_internal_controller.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/AuthCarService_internal_controller.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/AuthCarService_internal_controller.Error'
+      summary: Add car to user
+      tags:
+      - Cars
   /cars/search:
     post:
       consumes:
@@ -68,7 +149,7 @@ paths:
       parameters:
       - description: Car Search
         in: body
-        name: users
+        name: cars
         required: true
         schema:
           $ref: '#/definitions/endpoint.CarSearchRequest'
@@ -115,15 +196,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/internal_controller.Error'
+            $ref: '#/definitions/AuthCarService_internal_controller.Error'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/internal_controller.Error'
+            $ref: '#/definitions/AuthCarService_internal_controller.Error'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/internal_controller.Error'
+            $ref: '#/definitions/AuthCarService_internal_controller.Error'
       summary: Get User
       tags:
       - Users
@@ -135,7 +216,7 @@ paths:
       parameters:
       - description: Add User
         in: body
-        name: Cars
+        name: userInfo
         required: true
         schema:
           $ref: '#/definitions/endpoint.AddUserRequest'
@@ -149,16 +230,50 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/internal_controller.Error'
+            $ref: '#/definitions/AuthCarService_internal_controller.Error'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/internal_controller.Error'
+            $ref: '#/definitions/AuthCarService_internal_controller.Error'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/internal_controller.Error'
+            $ref: '#/definitions/AuthCarService_internal_controller.Error'
       summary: Add new user
+      tags:
+      - Users
+  /users/cars:
+    post:
+      consumes:
+      - application/json
+      description: Get all cars by user
+      parameters:
+      - description: Get User Cars
+        in: body
+        name: userCars
+        required: true
+        schema:
+          $ref: '#/definitions/endpoint.GetUserCarsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/endpoint.GetUserCarsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/AuthCarService_internal_controller.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/AuthCarService_internal_controller.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/AuthCarService_internal_controller.Error'
+      summary: Get user cars
       tags:
       - Users
 swagger: "2.0"

@@ -23,6 +23,58 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/cars/add": {
+            "post": {
+                "description": "add car to user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Cars"
+                ],
+                "summary": "Add car to user",
+                "parameters": [
+                    {
+                        "description": "Add Car",
+                        "name": "cars",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.AddCarRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.AddCarResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/AuthCarService_internal_controller.Error"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/AuthCarService_internal_controller.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/AuthCarService_internal_controller.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/cars/search": {
             "post": {
                 "description": "get string by ID",
@@ -39,7 +91,7 @@ var doc = `{
                 "parameters": [
                     {
                         "description": "Car Search",
-                        "name": "users",
+                        "name": "cars",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -91,7 +143,7 @@ var doc = `{
                 "parameters": [
                     {
                         "description": "Add User",
-                        "name": "Cars",
+                        "name": "userInfo",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -109,19 +161,71 @@ var doc = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/internal_controller.Error"
+                            "$ref": "#/definitions/AuthCarService_internal_controller.Error"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/internal_controller.Error"
+                            "$ref": "#/definitions/AuthCarService_internal_controller.Error"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/internal_controller.Error"
+                            "$ref": "#/definitions/AuthCarService_internal_controller.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/cars": {
+            "post": {
+                "description": "Get all cars by user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get user cars",
+                "parameters": [
+                    {
+                        "description": "Get User Cars",
+                        "name": "userCars",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.GetUserCarsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.GetUserCarsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/AuthCarService_internal_controller.Error"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/AuthCarService_internal_controller.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/AuthCarService_internal_controller.Error"
                         }
                     }
                 }
@@ -159,19 +263,19 @@ var doc = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/internal_controller.Error"
+                            "$ref": "#/definitions/AuthCarService_internal_controller.Error"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/internal_controller.Error"
+                            "$ref": "#/definitions/AuthCarService_internal_controller.Error"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/internal_controller.Error"
+                            "$ref": "#/definitions/AuthCarService_internal_controller.Error"
                         }
                     }
                 }
@@ -184,6 +288,34 @@ var doc = `{
             "properties": {
                 "message": {
                     "type": "string"
+                }
+            }
+        },
+        "endpoint.AddCarRequest": {
+            "type": "object",
+            "properties": {
+                "car_name": {
+                    "type": "string"
+                },
+                "mileage": {
+                    "type": "integer"
+                },
+                "model_id": {
+                    "type": "integer"
+                },
+                "production_year": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "endpoint.AddCarResponse": {
+            "type": "object",
+            "properties": {
+                "user_car_id": {
+                    "type": "integer"
                 }
             }
         },
@@ -245,6 +377,28 @@ var doc = `{
                 }
             }
         },
+        "endpoint.GetUserCarsRequest": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "endpoint.GetUserCarsResponse": {
+            "type": "object",
+            "properties": {
+                "user_cars": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/endpoint.UserCar"
+                    }
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "endpoint.GetUserResponse": {
             "type": "object",
             "properties": {
@@ -259,6 +413,29 @@ var doc = `{
                 },
                 "username": {
                     "type": "string"
+                }
+            }
+        },
+        "endpoint.UserCar": {
+            "type": "object",
+            "properties": {
+                "added_at": {
+                    "type": "string"
+                },
+                "car_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "mileage": {
+                    "type": "integer"
+                },
+                "model_id": {
+                    "type": "integer"
+                },
+                "production_year": {
+                    "type": "integer"
                 }
             }
         },

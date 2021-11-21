@@ -94,3 +94,37 @@ func (c *Controller) AddUser(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, addUserResponse)
 }
+
+// GetUserCars godoc
+// @Summary Get user cars
+// @Description Get all cars by user
+// @Tags Users
+// @Accept  json
+// @Produce  json
+// @Param userCars body endpoint.GetUserCarsRequest true "Get User Cars"
+// @Success 200 {object} endpoint.GetUserCarsResponse
+// @Failure 400 {object} Error
+// @Failure 404 {object} Error
+// @Failure 500 {object} Error
+// @Router /users/cars [post]
+func (c *Controller) GetUserCars(ctx *gin.Context) {
+
+	var user endpoint.GetUserCarsRequest
+	err := ctx.BindJSON(&user)
+	if err != nil {
+		errResponse := Error{
+			Message: fmt.Sprintf("Fail to parse request!"),
+		}
+		ctx.JSON(http.StatusBadRequest, errResponse)
+	}
+	getUserCarsResponse, err := c.grpcClient.GetUserCars(c.ctx, &user)
+	if err != nil {
+		errResponse := Error{
+			Message: fmt.Sprintf("Fail server! %s", err.Error()),
+		}
+		ctx.JSON(http.StatusServiceUnavailable, errResponse)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, getUserCarsResponse)
+}
