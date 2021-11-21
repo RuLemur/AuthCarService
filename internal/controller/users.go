@@ -79,9 +79,10 @@ func (c *Controller) AddUser(ctx *gin.Context) {
 	err := ctx.BindJSON(&user)
 	if err != nil {
 		errResponse := Error{
-			Message: fmt.Sprintf("Fail to parse request!"),
+			Message: fmt.Sprintf("Fail to parse request! %s", err.Error()),
 		}
 		ctx.JSON(http.StatusBadRequest, errResponse)
+		return
 	}
 	addUserResponse, err := c.grpcClient.AddUser(c.ctx, &user)
 	if err != nil {
