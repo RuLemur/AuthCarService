@@ -1,0 +1,4 @@
+http_server:
+  host: ":8080"
+grpc_server:
+  host: ":5300"

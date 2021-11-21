@@ -1,0 +1,164 @@
+definitions:
+  AuthCarService_internal_controller.Error:
+    properties:
+      message:
+        type: string
+    type: object
+  endpoint.AddUserRequest:
+    properties:
+      username:
+        type: string
+    type: object
+  endpoint.AddUserResponse:
+    properties:
+      id:
+        type: integer
+    type: object
+  endpoint.Car:
+    properties:
+      brand:
+        type: string
+      engine_type:
+        type: string
+      equipment:
+        type: string
+      id:
+        type: string
+      model:
+        type: string
+    type: object
+  endpoint.CarSearchRequest:
+    properties:
+      brand:
+        type: string
+      model:
+        type: string
+    type: object
+  endpoint.CarSearchResponse:
+    properties:
+      car:
+        items:
+          $ref: '#/definitions/endpoint.Car'
+        type: array
+    type: object
+  endpoint.GetUserResponse:
+    properties:
+      garage_id:
+        type: integer
+      id:
+        type: integer
+      updated_at:
+        type: string
+      username:
+        type: string
+    type: object
+  internal_controller.Error:
+    properties:
+      message:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /cars/search:
+    post:
+      consumes:
+      - application/json
+      description: get string by ID
+      parameters:
+      - description: Car Search
+        in: body
+        name: users
+        required: true
+        schema:
+          $ref: '#/definitions/endpoint.CarSearchRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/endpoint.CarSearchResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/AuthCarService_internal_controller.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/AuthCarService_internal_controller.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/AuthCarService_internal_controller.Error'
+      summary: Search car by brand and model
+      tags:
+      - Cars
+  /users/{id}:
+    get:
+      consumes:
+      - application/json
+      description: get user by id
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/endpoint.GetUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_controller.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_controller.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_controller.Error'
+      summary: Get User
+      tags:
+      - Users
+  /users/add:
+    post:
+      consumes:
+      - application/json
+      description: Add new user
+      parameters:
+      - description: Add User
+        in: body
+        name: Cars
+        required: true
+        schema:
+          $ref: '#/definitions/endpoint.AddUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/endpoint.AddUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_controller.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_controller.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_controller.Error'
+      summary: Add new user
+      tags:
+      - Users
+swagger: "2.0"
